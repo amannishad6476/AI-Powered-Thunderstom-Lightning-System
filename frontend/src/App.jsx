@@ -1,149 +1,70 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Header } from './components/Dashboard/Header';
-import { WeatherMap } from './components/Map/WeatherMap';
-import { TimelineControls } from './components/Dashboard/TimelineControls';
-import { RiskSummaryCard } from './components/Dashboard/RiskSummaryCard';
-import { LayerControlPanel } from './components/Dashboard/LayerControlPanel';
-import { AlertFeed } from './components/Dashboard/AlertFeed';
-import { MetricsPanel } from './components/Dashboard/MetricsPanel';
-import { LoadingSpinner } from './components/Common/LoadingSpinner';
-import {
-  fetchNowcastSummary,
-  fetchRecentStrikes,
-  fetchLightningRiskGrid,
-  fetchActiveAlerts,
-  fetchAWSStations,
-} from './services/api';
-import { wsClient } from './services/websocket';
+import { SidePanel } from './components/Dashboard/SidePanel';
+import { MapView } from './components/Map/MapView';
+import { useLiveWeatherSocket } from './hooks/useLiveWeatherSocket';
 
 export function App() {
-  const [loading, setLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [timeOffset, setTimeOffset] = useState(0);
+  // Use production real-time WebSocket hook connected to FastAPI /ws/live-feed
+  const {
+    forecastData,
+    connectionStatus,
+    isConnected,
+    lastUpdated,
+    latestStrikes,
+    reconnect,
+  } = useLiveWeatherSocket('ws://localhost:8000/ws/live-feed');
 
-  // Data states
-  const [nowcastData, setNowcastData] = useState(null);
-  const [strikes, setStrikes] = useState([]);
-  const [riskGrid, setRiskGrid] = useState([]);
-  const [alerts, setAlerts] = useState([]);
-  const [stations, setStations] = useState([]);
+  const [selectedCell, setSelectedCell] = useState(null);
 
-  // Layer visibility toggles
-  const [layerVisibility, setLayerVisibility] = useState({
-    radar: true,
-    lightning: true,
-    stormCells: true,
-    stations: true,
-    warnings: true,
-  });
+  // Delhi NCR Map Center
+  const mapCenter = [28.7041, 77.1025];
 
-  const handleToggleLayer = (key) => {
-    setLayerVisibility((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
+  const activeStormCells = forecastData?.active_storm_cells || [];
+  const multiRadarInputs = forecastData?.multi_radar_inputs || null;
+  const satelliteInputs = forecastData?.satellite_inputs || null;
+  const regionName = forecastData?.region_name || 'National Capital Region (Delhi NCR)';
 
-  const loadAllData = useCallback(async (lat = 28.6139, lon = 77.2090) => {
-    try {
-      setIsRefreshing(true);
-      const [nowcast, recentStrikes, lightningRisk, activeAlerts, awsList] = await Promise.all([
-        fetchNowcastSummary(lat, lon),
-        fetchRecentStrikes(lat, lon),
-        fetchLightningRiskGrid(lat, lon),
-        fetchActiveAlerts(lat, lon),
-        fetchAWSStations(),
-      ]);
-
-      setNowcastData(nowcast);
-      setStrikes(recentStrikes || nowcast?.recent_lightning_strikes || []);
-      setRiskGrid(lightningRisk?.strike_risk_grid || []);
-      setAlerts(activeAlerts || []);
-      setStations(awsList || []);
-    } catch (err) {
-      console.error('Failed to load nowcasting data:', err);
-    } finally {
-      setLoading(false);
-      setIsRefreshing(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadAllData();
-
-    // Connect WebSocket for live hazard updates
-    wsClient.connect();
-    const unsubscribe = wsClient.subscribe((msg) => {
-      if (msg.event === 'NEW_LIGHTNING_STRIKE') {
-        setStrikes((prev) => [msg.data, ...prev.slice(0, 50)]);
-      }
-    });
-
-    // Polling interval every 60 seconds
-    const interval = setInterval(() => {
-      loadAllData();
-    }, 60000);
-
-    return () => {
-      unsubscribe();
-      wsClient.disconnect();
-      clearInterval(interval);
-    };
-  }, [loadAllData]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <LoadingSpinner label="Initializing AI Doppler Radar & Lightning Nowcasting Engine..." />
-      </div>
-    );
-  }
+  // Determine user-facing system status string
+  const systemStatus = isConnected
+    ? 'LIVE WEBSOCKET STREAM'
+    : connectionStatus === 'CONNECTING' || connectionStatus === 'RECONNECTING'
+    ? 'CONNECTING TO RADAR FEED'
+    : 'STANDALONE / FALLBACK';
 
   return (
-    <div className="min-h-screen h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans">
-      {/* Top Header */}
+    <div className="min-h-screen h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden font-sans select-none">
+      {/* 1. Top Header with Live Real-Time Feed Indicators */}
       <Header
-        onRefresh={() => loadAllData()}
-        isRefreshing={isRefreshing}
-        activeAlertCount={alerts.length}
+        onRefresh={reconnect}
+        isRefreshing={connectionStatus === 'CONNECTING' || connectionStatus === 'RECONNECTING'}
+        systemStatus={systemStatus}
+        regionName={regionName}
+        lastUpdated={lastUpdated}
+        activeAlertCount={forecastData?.nowcast_summary?.severe_hazard_warnings?.length || 0}
       />
 
-      {/* Main Full-Screen Layout */}
-      <div className="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden">
-        {/* Left Interactive Map Viewport */}
-        <div className="flex-1 flex flex-col gap-3 min-h-[400px]">
-          <div className="flex-1 relative">
-            <WeatherMap
-              center={[28.6139, 77.2090]}
-              zoom={10}
-              timeOffset={timeOffset}
-              layerVisibility={layerVisibility}
-              nowcastData={nowcastData}
-              strikes={strikes}
-              riskGrid={riskGrid}
-              alerts={alerts}
-              stations={stations}
-            />
-          </div>
-
-          {/* Timeline & Playback Controller */}
-          <TimelineControls
-            currentOffset={timeOffset}
-            onOffsetChange={setTimeOffset}
+      {/* 2. Main Dashboard Layout (Interactive Map + Real-Time Telemetry Side Panel) */}
+      <main className="flex-1 flex flex-col lg:flex-row p-4 gap-4 overflow-hidden">
+        {/* Left / Center Interactive Leaflet Map Area */}
+        <section className="flex-1 flex flex-col h-full min-h-[420px] rounded-2xl overflow-hidden shadow-2xl relative">
+          <MapView
+            center={mapCenter}
+            zoom={10}
+            stormCells={activeStormCells}
+            multiRadarInputs={multiRadarInputs}
+            satelliteInputs={satelliteInputs}
+            latestStrikes={latestStrikes}
+            regionName={regionName}
           />
-        </div>
+        </section>
 
-        {/* Right Dashboard Telemetry & Alert Sidebar */}
-        <div className="w-full lg:w-96 flex flex-col gap-3.5 overflow-y-auto pr-1">
-          <RiskSummaryCard summary={nowcastData?.summary} />
-          <LayerControlPanel
-            layerVisibility={layerVisibility}
-            onToggleLayer={handleToggleLayer}
-          />
-          <MetricsPanel timeline={nowcastData?.forecast_timeline} />
-          <AlertFeed alerts={alerts} />
-        </div>
-      </div>
+        {/* Right Side Panel / Live Convective Telemetry */}
+        <SidePanel
+          forecastData={forecastData}
+          onSelectCell={setSelectedCell}
+        />
+      </main>
     </div>
   );
 }
