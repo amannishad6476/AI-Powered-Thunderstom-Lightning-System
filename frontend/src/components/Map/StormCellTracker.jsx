@@ -46,9 +46,9 @@ export const StormCellTracker = ({ stormCells = [], visible = true }) => {
               </Tooltip>
 
               <Popup>
-                <div className="p-1 space-y-1.5 text-xs text-slate-200 min-w-[200px]">
-                  <div className="flex items-center justify-between border-b border-slate-700 pb-1">
-                    <span className="font-bold text-sky-400 flex items-center">
+                <div className="p-1 space-y-1.5 text-xs text-slate-800 dark:text-slate-200 min-w-[200px]">
+                  <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-700 pb-1">
+                    <span className="font-bold text-sky-700 dark:text-sky-400 flex items-center">
                       <Flame className="w-3.5 h-3.5 mr-1 text-red-500" />
                       {cell.cell_id}
                     </span>
@@ -60,7 +60,7 @@ export const StormCellTracker = ({ stormCells = [], visible = true }) => {
                   <div><strong>Cloud Top Height:</strong> {cell.cloud_top_height_km} km</div>
                   <div><strong>VIL Density:</strong> {cell.vil_kg_m2} kg/m²</div>
                   <div className="flex items-center space-x-1">
-                    <Navigation className="w-3.5 h-3.5 text-slate-400" />
+                    <Navigation className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                     <span><strong>Speed / Heading:</strong> {cell.speed_kmh} km/h @ {cell.direction_deg}°</span>
                   </div>
                 </div>
@@ -91,3 +91,5 @@ export const StormCellTracker = ({ stormCells = [], visible = true }) => {
     </>
   );
 };
+
+export default StormCellTracker;

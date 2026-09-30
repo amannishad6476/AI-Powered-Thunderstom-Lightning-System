@@ -6,21 +6,21 @@ export const Legend = () => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
-    <div className="absolute bottom-6 right-6 z-[1000] bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-xl p-3 shadow-2xl text-xs max-w-xs transition-all">
+    <div className="absolute bottom-6 right-6 z-[1000] bg-white/95 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-700/80 rounded-xl p-3 shadow-lg dark:shadow-2xl text-xs max-w-xs transition-all">
       <div
-        className="flex items-center justify-between cursor-pointer font-semibold text-slate-200 mb-1"
+        className="flex items-center justify-between cursor-pointer font-semibold text-slate-800 dark:text-slate-200 mb-1"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center space-x-1.5">
-          <Layers className="w-4 h-4 text-sky-400" />
+          <Layers className="w-4 h-4 text-sky-600 dark:text-sky-400" />
           <span>Radar Reflectivity (dBZ)</span>
         </div>
-        {isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-slate-400" /> : <ChevronUp className="w-3.5 h-3.5 text-slate-400" />}
+        {isExpanded ? <ChevronDown className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" /> : <ChevronUp className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />}
       </div>
 
       {isExpanded && (
         <div className="mt-2 space-y-1">
-          <div className="h-2.5 w-full rounded-sm flex overflow-hidden border border-slate-600 mb-2">
+          <div className="h-2.5 w-full rounded-sm flex overflow-hidden border border-slate-300 dark:border-slate-600 mb-2">
             {DBZ_COLOR_SCALE.map((item, idx) => (
               <div
                 key={idx}
@@ -31,7 +31,7 @@ export const Legend = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] text-slate-300">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] text-slate-700 dark:text-slate-300">
             <div className="flex items-center space-x-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#02fd02] inline-block" />
               <span>35-40: Moderate Rain</span>
@@ -54,3 +54,5 @@ export const Legend = () => {
     </div>
   );
 };
+
+export default Legend;

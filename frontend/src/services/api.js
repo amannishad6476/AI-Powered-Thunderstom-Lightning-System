@@ -92,12 +92,39 @@ export const fetchAWSStations = async () => {
   }
 };
 
+export const fetchSirenStatus = async () => {
+  try {
+    const res = await apiClient.get('/alerts/siren-status');
+    return res.data;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const fetchCriticalAssets = async () => {
+  try {
+    const res = await apiClient.get('/alerts/critical-assets');
+    return res.data;
+  } catch (error) {
+    return [];
+  }
+};
+
+export const evaluateHazardThreats = async (stormCells) => {
+  try {
+    const res = await apiClient.post('/alerts/evaluate', stormCells);
+    return res.data;
+  } catch (error) {
+    return null;
+  }
+};
+
 // Fallback live-forecast data matching backend /api/live-forecast schema
 export function getFallbackLiveForecastData(region = 'National Capital Region (Delhi NCR)') {
   return {
     region_name: region,
     timestamp: new Date().toISOString(),
-    thunderstorm_probability: '85%',
+    thunderstorm_probability: '88%',
     lightning_risk_level: 'Severe',
     active_storm_cells: [
       {
@@ -161,15 +188,39 @@ export function getFallbackLiveForecastData(region = 'National Capital Region (D
       cloud_top_temp_kelvin: 204.5,
       overshooting_tops: true,
     },
+    emergency_siren_trigger: {
+      siren_triggered: true,
+      siren_level: 'LEVEL_3_HIGH_PRIORITY_KLAXON',
+      siren_sound: 'SEVERE_CONVECTIVE_SIREN_120DB',
+      siren_frequency_hz: 960,
+      automated_klaxon_active: true,
+      emergency_broadcast_text: '🚨 RED ALERT: Severe convective storm cell detected (>50 dBZ) intersecting critical urban infrastructure polygons. Automated sirens active.',
+      dispatch_flags: [
+        'AIRPORT_GROUND_STOP',
+        'RUNWAY_MICROBURST_SHEAR_ALERT',
+        'AIIMS_BACKUP_POWER_ENGAGED',
+        'GRID_SURGE_ARREST_ACTIVE',
+        'METRO_SPEED_RESTRICTION_30KMH'
+      ],
+      critical_threat_count: 2,
+    },
+    emergency_dispatch_flags: [
+      'AIRPORT_GROUND_STOP',
+      'RUNWAY_MICROBURST_SHEAR_ALERT',
+      'AIIMS_BACKUP_POWER_ENGAGED',
+      'GRID_SURGE_ARREST_ACTIVE',
+      'METRO_SPEED_RESTRICTION_30KMH'
+    ],
     nowcast_summary: {
-      estimated_arrival_minutes: 20,
-      peak_wind_gust_kmh: 76.5,
-      expected_precipitation_mm_hr: 48.0,
+      estimated_arrival_minutes: 12,
+      peak_wind_gust_kmh: 78.5,
+      expected_precipitation_mm_hr: 52.0,
       cape_j_kg: 2840.0,
       cin_j_kg: -15.0,
       severe_hazard_warnings: [
         'High-frequency Cloud-to-Ground (CG) lightning risk within 25km radius',
         'Localized convective squall and urban waterlogging alert',
+        '🚨 EMERGENCY SIREN TRIGGERED: LEVEL_3_HIGH_PRIORITY_KLAXON'
       ],
     },
   };
@@ -186,7 +237,7 @@ function getFallbackNowcastData(lat, lon) {
       reflectivity_dbz: 52.8,
       lightning_strike_probability: 0.85,
       risk_level: 'SEVERE',
-      storm_arrival_time_min: 20,
+      storm_arrival_time_min: 12,
       wind_gust_kmh: 74.2,
       cape_j_kg: 2840,
       cin_j_kg: -15,

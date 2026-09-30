@@ -22,20 +22,21 @@ export const WeatherMap = ({
   riskGrid = [],
   alerts = [],
   stations = [],
+  theme = 'light',
 }) => {
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-2xl border border-slate-800">
+    <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg dark:shadow-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 transition-colors">
       <MapContainer
         center={center}
         zoom={zoom}
         scrollWheelZoom={true}
-        className="w-full h-full z-0"
+        className={`w-full h-full z-0 ${theme === 'dark' ? 'leaflet-dark-tiles' : ''}`}
         zoomControl={false}
       >
-        {/* Dark Matter Base Map Tile Layer */}
+        {/* OpenStreetMap Standard Basemap (Free, No API Key, No Watermark) */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           maxZoom={19}
         />
 
@@ -86,10 +87,10 @@ export const WeatherMap = ({
                 }}
               >
                 <Popup>
-                  <div className="p-1 space-y-1 text-xs">
-                    <span className="font-bold text-red-400">{alert.headline}</span>
-                    <p className="text-slate-300">{alert.description}</p>
-                    <p className="text-amber-300"><strong>Action:</strong> {alert.instruction}</p>
+                  <div className="p-1 space-y-1 text-xs text-slate-800 dark:text-slate-200">
+                    <span className="font-bold text-red-600 dark:text-red-400">{alert.headline}</span>
+                    <p className="text-slate-600 dark:text-slate-300">{alert.description}</p>
+                    <p className="text-amber-700 dark:text-amber-300"><strong>Action:</strong> {alert.instruction}</p>
                   </div>
                 </Popup>
               </Polygon>
@@ -102,3 +103,5 @@ export const WeatherMap = ({
     </div>
   );
 };
+
+export default WeatherMap;
