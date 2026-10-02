@@ -101,6 +101,7 @@ class WeatherAlert(BaseModel):
     onset: datetime
     expires: datetime
     is_active: bool = True
+    impacted_infrastructure: Optional[List[str]] = None
 
 
 # Automatic Weather Station (AWS) Observation
@@ -117,3 +118,83 @@ class StationObservation(BaseModel):
     rain_rate_mm_hr: float
     cape_index: float
     timestamp: datetime
+
+
+# ---------------------------------------------------------------------------
+# PostGIS Spatial & Urban Critical Infrastructure Schemas
+# ---------------------------------------------------------------------------
+class CriticalInfrastructure(BaseModel):
+    """Schema for critical urban infrastructure asset polygons."""
+    asset_id: str
+    name: str
+    category: str  # AIRPORT, POWER_GRID, METRO_NETWORK, POPULATED_SECTOR, HOSPITAL
+    risk_tolerance: str  # CRITICAL, HIGH, MODERATE
+    centroid_lat: float
+    centroid_lng: float
+    area_sqkm: float
+    contact_agency: str
+    alert_threshold_dbz: float
+    polygon_geojson: Optional[Dict[str, Any]] = None
+
+
+class InfrastructureThreatAssessment(BaseModel):
+    """Assessment of an active storm cell intersecting an infrastructure polygon."""
+    asset_id: str
+    name: str
+    category: str
+    risk_tolerance: str
+    distance_to_cell_core_km: float
+    estimated_impact_time_min: int
+    is_direct_hit: bool
+    threat_level: str  # CRITICAL, HIGH, MODERATE
+    intersecting_cell_id: str
+    cell_max_dbz: float
+    recommended_action: str
+
+
+class HistoricalStormTrackRecord(BaseModel):
+    """Historical storm cell track record with PostGIS bounding box and trajectory."""
+    cell_id: str
+    timestamp: datetime
+    centroid: GeoPoint
+    radius_km: float
+    max_reflectivity_dbz: float
+    vil_kg_m2: float
+    cloud_top_height_km: float
+    speed_kmh: float
+    direction_deg: float
+    severity_level: str
+    bbox_geojson: Optional[Dict[str, Any]] = None
+    trajectory_geojson: Optional[Dict[str, Any]] = None
+
+
+class SpatialIntersectionQueryRequest(BaseModel):
+    """Request payload for spatial storm-infrastructure intersection analysis."""
+    cell_id: str = "CELL-NCR-01"
+    latitude: float = Field(28.7041, description="Storm cell centroid latitude")
+    longitude: float = Field(77.1025, description="Storm cell centroid longitude")
+    radius_km: float = Field(18.5, description="Storm cell hazard coverage radius in km")
+    max_reflectivity_dbz: float = Field(56.4, description="Peak composite reflectivity in dBZ")
+    speed_kmh: float = Field(42.0, description="Storm propagation speed in km/h")
+
+
+class SpatialIntersectionQueryResponse(BaseModel):
+    """Response payload with all intersected urban assets and threat assessments."""
+    timestamp: datetime
+    query_cell_id: str
+    storm_radius_km: float
+    max_reflectivity_dbz: float
+    total_impacted_assets: int
+    threat_assessments: List[InfrastructureThreatAssessment]
+    critical_alerts_triggered: int
+
+
+class RadarPeakRecord(BaseModel):
+    """Doppler radar peak observation record."""
+    radar_station: str
+    timestamp: datetime
+    peak_dbz: float
+    echo_top_km: float
+    radial_velocity_ms: float
+    scan_elevation_angle: float
+    peak_coordinates: GeoPoint

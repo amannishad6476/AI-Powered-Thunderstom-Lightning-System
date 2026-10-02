@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zap, CloudRain, Wind, Flame, Gauge, AlertTriangle, ArrowUpRight } from 'lucide-react';
+import { Zap, CloudRain, Wind, Flame, Gauge, AlertTriangle } from 'lucide-react';
 import { getSeverityColor } from '../../utils/colorScales';
 
 export const RiskSummaryCard = ({ summary }) => {
@@ -9,29 +9,29 @@ export const RiskSummaryCard = ({ summary }) => {
   const probPercent = Math.round(summary.lightning_strike_probability * 100);
 
   return (
-    <div className="bg-white/95 dark:bg-slate-900/80 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-md dark:shadow-xl space-y-4 transition-colors">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 space-y-4 transition-colors">
       {/* Header Risk Banner */}
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
           Current Atmospheric Risk
         </span>
-        <div className={`flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold border ${severity.bg} ${severity.text} ${severity.border}`}>
+        <div className={`flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-bold border ${severity.bg} ${severity.text} ${severity.border}`}>
           <AlertTriangle className="w-3.5 h-3.5" />
           <span>{summary.risk_level} HAZARD</span>
         </div>
       </div>
 
       {/* Main Metric: Lightning Probability Gauge */}
-      <div className="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-3.5 border border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
+      <div className="bg-slate-50 dark:bg-slate-950/60 rounded-xl p-3.5 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
         <div className="space-y-1">
-          <div className="flex items-center space-x-1.5 text-xs text-slate-500 dark:text-slate-400">
+          <div className="flex items-center space-x-1.5 text-xs text-slate-700 dark:text-slate-300 font-semibold">
             <Zap className="w-4 h-4 text-amber-500 dark:text-amber-400" />
             <span>Lightning Strike Probability (0–60m)</span>
           </div>
           <div className="text-3xl font-extrabold text-amber-600 dark:text-amber-400 font-mono tracking-tight">
             {probPercent}%
           </div>
-          <div className="text-[11px] text-slate-500 dark:text-slate-400">
+          <div className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">
             High-density ground discharge hazard detected
           </div>
         </div>
@@ -61,55 +61,55 @@ export const RiskSummaryCard = ({ summary }) => {
       {/* Grid of Thermodynamic and Radar Parameters */}
       <div className="grid grid-cols-2 gap-2.5">
         {/* Precipitation Rate */}
-        <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50">
-          <div className="flex items-center space-x-1.5 text-xs text-slate-500 dark:text-slate-400 mb-1">
-            <CloudRain className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400" />
+        <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="flex items-center space-x-1.5 text-xs text-slate-600 dark:text-slate-400 mb-1 font-medium">
+            <CloudRain className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
             <span>Rainfall Rate</span>
           </div>
           <div className="text-lg font-bold text-slate-900 dark:text-slate-100">
-            {summary.precipitation_rate_mm_hr} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">mm/h</span>
+            {summary.precipitation_rate_mm_hr} <span className="text-xs font-normal text-slate-600 dark:text-slate-400">mm/h</span>
           </div>
         </div>
 
         {/* Max dBZ */}
-        <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50">
-          <div className="flex items-center space-x-1.5 text-xs text-slate-500 dark:text-slate-400 mb-1">
-            <Flame className="w-3.5 h-3.5 text-red-500 dark:text-red-400" />
+        <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="flex items-center space-x-1.5 text-xs text-slate-600 dark:text-slate-400 mb-1 font-medium">
+            <Flame className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
             <span>Reflectivity</span>
           </div>
           <div className="text-lg font-bold text-slate-900 dark:text-slate-100">
-            {summary.reflectivity_dbz} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">dBZ</span>
+            {summary.reflectivity_dbz} <span className="text-xs font-normal text-slate-600 dark:text-slate-400">dBZ</span>
           </div>
         </div>
 
         {/* Wind Gusts */}
-        <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50">
-          <div className="flex items-center space-x-1.5 text-xs text-slate-500 dark:text-slate-400 mb-1">
+        <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="flex items-center space-x-1.5 text-xs text-slate-600 dark:text-slate-400 mb-1 font-medium">
             <Wind className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
             <span>Peak Wind Gust</span>
           </div>
           <div className="text-lg font-bold text-slate-900 dark:text-slate-100">
-            {summary.wind_gust_kmh} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">km/h</span>
+            {summary.wind_gust_kmh} <span className="text-xs font-normal text-slate-600 dark:text-slate-400">km/h</span>
           </div>
         </div>
 
         {/* CAPE Index */}
-        <div className="p-3 bg-slate-800/50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700/50">
-          <div className="flex items-center space-x-1.5 text-xs text-slate-500 dark:text-slate-400 mb-1">
-            <Gauge className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
+        <div className="p-3 bg-slate-50 dark:bg-slate-950/60 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="flex items-center space-x-1.5 text-xs text-slate-600 dark:text-slate-400 mb-1 font-medium">
+            <Gauge className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
             <span>CAPE Instability</span>
           </div>
           <div className="text-lg font-bold text-slate-900 dark:text-slate-100">
-            {summary.cape_j_kg} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">J/kg</span>
+            {summary.cape_j_kg} <span className="text-xs font-normal text-slate-600 dark:text-slate-400">J/kg</span>
           </div>
         </div>
       </div>
 
       {/* Storm Arrival Lead Time */}
       {summary.storm_arrival_time_min && (
-        <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/40 flex items-center justify-between text-xs">
-          <span className="text-indigo-700 dark:text-indigo-300 font-medium">Estimated Storm Cell Core Arrival:</span>
-          <span className="font-bold text-indigo-900 dark:text-indigo-200 font-mono">+{summary.storm_arrival_time_min} mins</span>
+        <div className="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 flex items-center justify-between text-xs">
+          <span className="text-indigo-800 dark:text-indigo-300 font-semibold">Estimated Storm Cell Core Arrival:</span>
+          <span className="font-bold text-indigo-900 dark:text-indigo-100 font-mono">+{summary.storm_arrival_time_min} mins</span>
         </div>
       )}
     </div>

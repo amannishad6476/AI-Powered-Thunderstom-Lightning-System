@@ -1,0 +1,49 @@
+# Version Control
+.git
+.gitignore
+
+# Python Cache & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Logs
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# Environment & Local Secrets
+.env
+.env.local
+*.db
+*.sqlite3
+
+# Node / Frontend Artifacts
+node_modules/
+frontend/dist/
+frontend/node_modules/
+
+# OS Specific
+.DS_Store
+Thumbs.db

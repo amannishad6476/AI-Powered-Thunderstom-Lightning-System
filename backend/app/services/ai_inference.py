@@ -1,11 +1,16 @@
 import os
 import math
-import numpy as np
 from datetime import datetime, timedelta
 from typing import List, Dict, Any
 from app.config import settings
 from app.models.schemas import StormCell
 from app.utils.meteorological import dbz_to_rain_rate
+
+try:
+    import numpy as np
+except ImportError:
+    np = None
+
 
 
 class AIInferenceEngine:

@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # ============================================================================
+  # 1. PostgreSQL + PostGIS Spatial Database
+  # ============================================================================
+  database:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: sih26072-postgis-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-nowcast_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_secure_pass_sih26072}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_DB:-nowcast_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - nowcast_network
+
+  # ============================================================================
+  # 2. FastAPI + PyTorch + ConvLSTM Nowcasting Backend API
+  # ============================================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sih26072-nowcast-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres_secure_pass_sih26072}@database:5432/${POSTGRES_DB:-nowcast_db}
+      HOST: 0.0.0.0
+      PORT: 8000
+      DEBUG: "false"
+      PROJECT_NAME: "AI-Powered Thunderstorm & Lightning Nowcasting System (SIH26072)"
+      API_V1_STR: "/api/v1"
+      CORS_ORIGINS: '["http://localhost", "http://localhost:80", "http://localhost:3000", "http://localhost:5173", "*"]'
+      IMD_RADAR_DATA_DIR: /app/data/radar
+      INSAT_DATA_DIR: /app/data/satellite
+      CONVLSTM_MODEL_PATH: /app/ml_pipeline/model_checkpoints/convlstm_radar_nowcast.onnx
+      LIGHTNING_MODEL_PATH: /app/ml_pipeline/model_checkpoints/lightning_risk_xgb.onnx
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/ml_pipeline/model_checkpoints:/app/ml_pipeline/model_checkpoints
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - nowcast_network
+
+  # ============================================================================
+  # 3. React + Tailwind CSS + Leaflet Frontend UI (Nginx)
+  # ============================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api/v1
+        VITE_WS_URL: /ws/live-feed
+    container_name: sih26072-nowcast-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - nowcast_network
+
+# ==============================================================================
+# Persistent Named Volumes
+# ==============================================================================
+volumes:
+  postgis_data:
+    name: sih26072_postgis_data
+    driver: local
+
+# ==============================================================================
+# Dedicated Bridge Network
+# ==============================================================================
+networks:
+  nowcast_network:
+    name: sih26072_nowcast_network
+    driver: bridge

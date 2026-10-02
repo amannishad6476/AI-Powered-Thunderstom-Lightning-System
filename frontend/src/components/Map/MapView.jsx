@@ -515,24 +515,24 @@ export const MapView = ({
 
         {/* 2. Floating Top-Left Region Badge & GPS Status */}
         <div className="absolute top-3 left-3 z-[999] flex flex-col gap-1.5 pointer-events-none">
-          <div className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center space-x-2.5 pointer-events-auto">
+          <div className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs font-bold text-slate-900 dark:text-slate-100 flex items-center space-x-2.5 pointer-events-auto shadow-sm">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
             </span>
-            <span className="font-bold">{regionName}</span>
-            <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-sky-700 dark:text-sky-400 border border-slate-200 dark:border-slate-700 font-mono">
+            <span className="font-extrabold">{regionName}</span>
+            <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-sky-800 dark:text-sky-300 border border-slate-300 dark:border-slate-700 font-mono font-bold">
               {stormCells.length} Convective Cells
             </span>
           </div>
 
           {/* GPS Proximity Card */}
           {userLocation && nearestStormToUser && (
-            <div className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 flex items-center space-x-2 pointer-events-auto">
-              <MapPin className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 flex-shrink-0" />
-              <span className="text-[11px]">
-                Nearest Core: <strong className="text-slate-900 dark:text-slate-100">{nearestStormToUser.cell_id}</strong> (
-                <span className="text-amber-700 dark:text-amber-400 font-bold">
+            <div className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs text-slate-800 dark:text-slate-200 flex items-center space-x-2 pointer-events-auto shadow-sm">
+              <MapPin className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400 flex-shrink-0" />
+              <span className="text-[11px] font-medium">
+                Nearest Core: <strong className="text-slate-900 dark:text-slate-100 font-bold">{nearestStormToUser.cell_id}</strong> (
+                <span className="text-amber-800 dark:text-amber-400 font-bold">
                   {nearestStormToUser.distanceKm} km {nearestStormToUser.bearing}
                 </span>
                 )
@@ -542,9 +542,9 @@ export const MapView = ({
 
           {/* GPS Error Alert */}
           {gpsError && (
-            <div className="px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-300 text-xs flex items-center space-x-1.5 pointer-events-auto">
+            <div className="px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-900 text-amber-900 dark:text-amber-300 text-xs flex items-center space-x-1.5 pointer-events-auto">
               <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
-              <span className="text-[11px]">{gpsError}</span>
+              <span className="text-[11px] font-semibold">{gpsError}</span>
             </div>
           )}
         </div>
@@ -554,10 +554,10 @@ export const MapView = ({
           {/* Live GPS Button */}
           <button
             onClick={handleGpsToggle}
-            className={`px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors flex items-center space-x-1.5 cursor-pointer active:scale-95 ${
+            className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition-colors flex items-center space-x-1.5 cursor-pointer active:scale-95 shadow-sm ${
               isGpsTracking && userLocation
-                ? 'bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-700'
-                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                ? 'bg-sky-50 dark:bg-sky-950/50 text-sky-800 dark:text-sky-300 border-sky-300 dark:border-sky-700'
+                : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white'
             }`}
             title={userLocation ? 'Re-center Map on My Live GPS Location' : 'Activate Live GPS Position Tracking'}
           >
@@ -566,7 +566,7 @@ export const MapView = ({
             ) : isGpsTracking && userLocation ? (
               <LocateFixed className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 animate-pulse" />
             ) : (
-              <Locate className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+              <Locate className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
             )}
             <span>{isGpsTracking && userLocation ? 'GPS Active' : isGpsLocating ? 'Locating...' : 'Live GPS'}</span>
           </button>
@@ -574,21 +574,21 @@ export const MapView = ({
           {/* GIS Critical Assets Layer Toggle */}
           <button
             onClick={() => setShowCriticalAssets(!showCriticalAssets)}
-            className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition flex items-center space-x-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer shadow-sm ${
               showCriticalAssets
-                ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-700'
-                : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400'
+                ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-800 dark:text-indigo-300 border-indigo-300 dark:border-indigo-700'
+                : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
             }`}
             title="Toggle Urban Critical Infrastructure Geofences"
           >
-            <Building2 className="w-3.5 h-3.5" />
+            <Building2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
             <span>Critical Assets</span>
           </button>
 
           {/* Dark / Light Basemap Mode Toggle */}
           <button
             onClick={() => setMapMode(mapMode === 'dark' ? 'standard' : 'dark')}
-            className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 active:scale-95 text-xs font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition flex items-center space-x-1.5 cursor-pointer"
+            className="px-3 py-1.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 active:scale-95 text-xs font-bold text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white transition flex items-center space-x-1.5 cursor-pointer shadow-sm"
             title="Toggle Dark Meteorological / Standard OSM Basemap"
           >
             <Layers className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
@@ -596,14 +596,14 @@ export const MapView = ({
           </button>
         </div>
 
-        {/* 5. Floating Bottom-Right Severity Legend */}
-        <div className="absolute bottom-4 right-3 z-[999] px-3 py-2 rounded-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border border-slate-200 dark:border-slate-800 text-xs space-y-1.5 pointer-events-auto max-w-[270px]">
+        {/* 4. Floating Bottom-Right Severity Legend */}
+        <div className="absolute bottom-4 right-3 z-[999] px-3 py-2 rounded-lg bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm border border-slate-300 dark:border-slate-800 text-xs space-y-1.5 pointer-events-auto max-w-[270px] shadow-sm">
           <div
-            className="flex items-center justify-between cursor-pointer font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[10px]"
+            className="flex items-center justify-between cursor-pointer font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider text-[10px]"
             onClick={() => setIsLegendOpen(!isLegendOpen)}
           >
             <span>Convective Reflectivity & Assets</span>
-            <span className="text-sky-600 dark:text-sky-400 ml-2 font-mono">[{isLegendOpen ? '−' : '+'}]</span>
+            <span className="text-sky-700 dark:text-sky-400 ml-2 font-mono font-extrabold">[{isLegendOpen ? '−' : '+'}]</span>
           </div>
 
           {isLegendOpen && (
@@ -611,20 +611,20 @@ export const MapView = ({
               <div className="flex items-center justify-between text-[11px]">
                 <div className="flex items-center space-x-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-red-500 border border-red-300"></span>
-                  <span className="text-slate-800 dark:text-slate-200 font-medium">Severe Core (Siren Hook)</span>
+                  <span className="text-slate-900 dark:text-slate-200 font-semibold">Severe Core (Siren Hook)</span>
                 </div>
-                <span className="text-red-600 dark:text-red-400 font-mono font-bold">&gt; 50 dBZ</span>
+                <span className="text-red-700 dark:text-red-400 font-mono font-extrabold">&gt; 50 dBZ</span>
               </div>
 
               <div className="flex items-center justify-between text-[11px]">
                 <div className="flex items-center space-x-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-orange-500 border border-orange-300"></span>
-                  <span className="text-slate-800 dark:text-slate-200 font-medium">Moderate Storm</span>
+                  <span className="text-slate-900 dark:text-slate-200 font-semibold">Moderate Storm</span>
                 </div>
-                <span className="text-orange-600 dark:text-orange-400 font-mono font-bold">38–50 dBZ</span>
+                <span className="text-orange-700 dark:text-orange-400 font-mono font-extrabold">38–50 dBZ</span>
               </div>
 
-              <div className="flex items-center justify-between text-[10px] pt-1 text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800/80">
+              <div className="flex items-center justify-between text-[10px] pt-1 text-slate-600 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800/80 font-medium">
                 <div className="flex items-center space-x-1">
                   <span className="w-2 h-2 rounded bg-sky-500"></span>
                   <span>IGI Airport</span>

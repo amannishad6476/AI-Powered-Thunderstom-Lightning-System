@@ -34,13 +34,33 @@ export const getSeverityColor = (severity) => {
   switch (severity?.toUpperCase()) {
     case 'EXTREME':
     case 'CRITICAL':
-      return { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500', hex: '#ef4444' };
+      return {
+        bg: 'bg-red-50 dark:bg-red-950/40',
+        text: 'text-red-800 dark:text-red-300',
+        border: 'border-red-300 dark:border-red-800',
+        hex: '#dc2626',
+      };
     case 'SEVERE':
     case 'HIGH':
-      return { bg: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500', hex: '#f97316' };
+      return {
+        bg: 'bg-orange-50 dark:bg-orange-950/40',
+        text: 'text-orange-800 dark:text-orange-300',
+        border: 'border-orange-300 dark:border-orange-800',
+        hex: '#ea580c',
+      };
     case 'MODERATE':
-      return { bg: 'bg-amber-500/20', text: 'text-amber-400', border: 'border-amber-500', hex: '#f59e0b' };
+      return {
+        bg: 'bg-amber-50 dark:bg-amber-950/40',
+        text: 'text-amber-900 dark:text-amber-300',
+        border: 'border-amber-300 dark:border-amber-800',
+        hex: '#d97706',
+      };
     default:
-      return { bg: 'bg-emerald-500/20', text: 'text-emerald-400', border: 'border-emerald-500', hex: '#10b981' };
+      return {
+        bg: 'bg-emerald-50 dark:bg-emerald-950/40',
+        text: 'text-emerald-800 dark:text-emerald-300',
+        border: 'border-emerald-300 dark:border-emerald-800',
+        hex: '#059669',
+      };
   }
 };

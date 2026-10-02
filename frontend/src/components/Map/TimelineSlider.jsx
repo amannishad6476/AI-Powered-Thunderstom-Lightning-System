@@ -8,10 +8,8 @@ import {
   Clock,
   Radio,
   Sparkles,
-  Zap,
   FastForward,
 } from 'lucide-react';
-import { formatOffsetLabel } from '../../utils/dateUtils';
 
 export const TIMELINE_STEPS = [-60, -45, -30, -15, 0, 15, 30, 45, 60, 90, 120];
 
@@ -102,19 +100,19 @@ export const TimelineSlider = ({
   const isFuture = currentOffset > 0;
 
   return (
-    <div className="w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 sm:p-3 transition-colors select-none text-slate-800 dark:text-slate-200">
+    <div className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-2.5 sm:p-3 transition-colors select-none text-slate-900 dark:text-slate-100">
       {/* Top Meta Bar: Status Pill, Current Frame Time, and Dual-Zone Legend */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-200/80 dark:border-slate-800/80 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-200 dark:border-slate-800 text-xs">
         {/* Left: Playback State & Time Indicator */}
         <div className="flex items-center space-x-2">
           {/* Mode Badge */}
           <div
-            className={`px-2.5 py-1 rounded-md font-semibold text-[11px] flex items-center space-x-1.5 border ${
+            className={`px-2.5 py-1 rounded-md font-bold text-[11px] flex items-center space-x-1.5 border ${
               isPresent
-                ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border-emerald-300 dark:border-emerald-800'
+                ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-300 dark:border-emerald-800'
                 : isPast
-                ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-800'
-                : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800'
+                ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 border-sky-300 dark:border-sky-800'
+                : 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-800 dark:text-indigo-300 border-indigo-300 dark:border-indigo-800'
             }`}
           >
             {isPresent ? (
@@ -124,28 +122,28 @@ export const TimelineSlider = ({
               </>
             ) : isPast ? (
               <>
-                <Radio className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                <Radio className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400" />
                 <span>OBSERVED DOPPLER RADAR ({currentOffset}m)</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-spin" />
+                <Sparkles className="w-3.5 h-3.5 text-indigo-700 dark:text-indigo-400 animate-spin" />
                 <span>CONVLSTM AI NOWCAST (+{currentOffset}m)</span>
               </>
             )}
           </div>
 
           {/* Time Display */}
-          <div className="flex items-center space-x-1.5 px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-md border border-slate-200 dark:border-slate-700 font-mono text-[11px] text-slate-700 dark:text-slate-300">
-            <Clock className="w-3 h-3 text-slate-500" />
-            <span className="font-bold text-slate-900 dark:text-slate-100">{frameTime.ist}</span>
-            <span className="text-slate-400 dark:text-slate-500 text-[10px]">({frameTime.utc})</span>
+          <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-slate-100 dark:bg-slate-800/80 rounded-md border border-slate-300 dark:border-slate-700 font-mono text-[11px] text-slate-800 dark:text-slate-200">
+            <Clock className="w-3.5 h-3.5 text-slate-500" />
+            <span className="font-extrabold text-slate-900 dark:text-slate-100">{frameTime.ist}</span>
+            <span className="text-slate-500 dark:text-slate-400 text-[10px] font-semibold">({frameTime.utc})</span>
           </div>
         </div>
 
         {/* Right: Dual-Zone Legend & Quick Reset */}
         <div className="flex items-center space-x-3 text-[11px]">
-          <div className="hidden sm:flex items-center space-x-3 text-slate-500 dark:text-slate-400">
+          <div className="hidden sm:flex items-center space-x-3 text-slate-600 dark:text-slate-400 font-medium">
             <span className="flex items-center space-x-1">
               <span className="w-2 h-2 rounded bg-sky-500"></span>
               <span>Past Radar (-60m)</span>
@@ -160,7 +158,7 @@ export const TimelineSlider = ({
           {!isPresent && (
             <button
               onClick={handleResetLive}
-              className="px-2.5 py-0.5 rounded bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-[11px] flex items-center space-x-1 transition active:scale-95 cursor-pointer"
+              className="px-2.5 py-1 rounded bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] flex items-center space-x-1 transition active:scale-95 cursor-pointer shadow-sm"
               title="Return to Real-Time Live Stream"
             >
               <RotateCcw className="w-3 h-3" />
@@ -179,21 +177,21 @@ export const TimelineSlider = ({
             const isStepPast = step < 0;
             const isStepZero = step === 0;
 
-            let buttonClass = 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800';
+            let buttonClass = 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800';
             if (isSelected) {
               if (isStepZero) {
-                buttonClass = 'bg-emerald-600 text-white font-bold ring-2 ring-emerald-400 dark:ring-emerald-500';
+                buttonClass = 'bg-emerald-600 dark:bg-emerald-500 text-white dark:text-slate-950 font-black ring-2 ring-emerald-400';
               } else if (isStepPast) {
-                buttonClass = 'bg-sky-600 text-white font-bold ring-2 ring-sky-400 dark:ring-sky-500';
+                buttonClass = 'bg-sky-600 dark:bg-sky-500 text-white dark:text-slate-950 font-black ring-2 ring-sky-400';
               } else {
-                buttonClass = 'bg-indigo-600 text-white font-bold ring-2 ring-indigo-400 dark:ring-indigo-500';
+                buttonClass = 'bg-indigo-600 dark:bg-indigo-500 text-white dark:text-slate-950 font-black ring-2 ring-indigo-400';
               }
             } else if (isStepZero) {
-              buttonClass = 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 font-semibold';
+              buttonClass = 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 font-bold';
             } else if (isStepPast) {
-              buttonClass = 'bg-sky-50/70 dark:bg-sky-950/30 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-900';
+              buttonClass = 'bg-sky-50 dark:bg-sky-950/30 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-900 font-semibold';
             } else {
-              buttonClass = 'bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-900';
+              buttonClass = 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-800 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-900 font-semibold';
             }
 
             return (
@@ -212,10 +210,10 @@ export const TimelineSlider = ({
                     : `ConvLSTM AI Spatiotemporal Prediction +${step} min`
                 }
               >
-                <div className="font-bold leading-none">
+                <div className="font-extrabold leading-none">
                   {step === 0 ? 'T0' : step > 0 ? `+${step}m` : `${step}m`}
                 </div>
-                <div className="text-[9px] opacity-75 mt-0.5 leading-none">
+                <div className="text-[9px] font-medium opacity-80 mt-0.5 leading-none">
                   {step === 0 ? 'Live' : step < 0 ? 'Radar' : 'AI'}
                 </div>
               </button>
@@ -242,13 +240,13 @@ export const TimelineSlider = ({
       </div>
 
       {/* Bottom Transport Controls Bar: Play/Pause, Step Buttons, Speed Toggle */}
-      <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 dark:border-slate-800/80 text-xs">
+      <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800 text-xs">
         {/* Left: Playback Controls */}
         <div className="flex items-center space-x-1.5">
           {/* Play / Pause Loop */}
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className={`px-3 py-1.5 rounded-lg font-bold text-xs flex items-center space-x-1.5 transition active:scale-95 cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg font-bold text-xs flex items-center space-x-1.5 transition active:scale-95 cursor-pointer shadow-sm ${
               isPlaying
                 ? 'bg-amber-500 hover:bg-amber-600 text-slate-950'
                 : 'bg-sky-600 hover:bg-sky-700 text-white'
@@ -271,7 +269,7 @@ export const TimelineSlider = ({
           {/* Step Back (-15m) */}
           <button
             onClick={handleStepBack}
-            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition active:scale-95 cursor-pointer"
+            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition active:scale-95 cursor-pointer"
             title="Step Back 15 Minutes"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -280,7 +278,7 @@ export const TimelineSlider = ({
           {/* Step Forward (+15m) */}
           <button
             onClick={handleStepForward}
-            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition active:scale-95 cursor-pointer"
+            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition active:scale-95 cursor-pointer"
             title="Step Forward 15 Minutes"
           >
             <ChevronRight className="w-4 h-4" />
@@ -289,7 +287,7 @@ export const TimelineSlider = ({
           {/* Reset to T0 */}
           <button
             onClick={handleResetLive}
-            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition active:scale-95 cursor-pointer"
+            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition active:scale-95 cursor-pointer"
             title="Reset to Live (T0)"
           >
             <RotateCcw className="w-4 h-4" />
@@ -301,15 +299,15 @@ export const TimelineSlider = ({
           {/* Speed Toggle */}
           <button
             onClick={toggleSpeed}
-            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-mono font-bold text-[11px] flex items-center space-x-1 transition active:scale-95 cursor-pointer"
+            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 font-mono font-bold text-[11px] flex items-center space-x-1 transition active:scale-95 cursor-pointer"
             title="Cycle Playback Speed (0.5x, 1x, 2x, 4x)"
           >
-            <FastForward className="w-3 h-3 text-sky-600 dark:text-sky-400" />
+            <FastForward className="w-3.5 h-3.5 text-sky-700 dark:text-sky-400" />
             <span>{playbackSpeed}x</span>
           </button>
 
           {/* Range Scope Pill */}
-          <span className="hidden sm:inline-block px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-mono text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+          <span className="hidden sm:inline-block px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-mono text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-slate-700 font-medium">
             Window: -60m to +120m
           </span>
         </div>
